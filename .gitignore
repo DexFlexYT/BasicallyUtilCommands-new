@@ -588,3 +588,105 @@ build/classes/java/main/org/dexflex/basicallycommandutils/mixin/PlayerNbtMixin.c
 build/resources/main/basicallyutilcommands.mixins.json
 build/resources/main/fabric.mod.json
 build/resources/main/assets/basicallyutilcommands/icon.png
+run/debug-profile.json
+run/data/fabric_default_resource_packs.json
+run/logs/2026-08-14-4.log.gz
+run/logs/2026-08-23-1.log.gz
+run/logs/2026-08-23-2.log.gz
+run/logs/2026-08-23-3.log.gz
+run/logs/2026-08-23-4.log.gz
+run/logs/2026-08-23-5.log.gz
+run/logs/2026-08-23-6.log.gz
+run/saves/New World/data/minecraft/command_storage.dat
+run/saves/New World/data/minecraft/custom_boss_events.dat
+run/saves/New World/data/minecraft/game_rules.dat
+run/saves/New World/data/minecraft/random_sequences.dat
+run/saves/New World/data/minecraft/scheduled_events.dat
+run/saves/New World/data/minecraft/scoreboard.dat
+run/saves/New World/data/minecraft/stopwatches.dat
+run/saves/New World/data/minecraft/wandering_trader.dat
+run/saves/New World/data/minecraft/weather.dat
+run/saves/New World/data/minecraft/world_clocks.dat
+run/saves/New World/data/minecraft/world_gen_settings.dat
+run/saves/New World/data/namespace/command_storage.dat
+run/saves/New World/data/splatoon/command_storage.dat
+run/saves/New World/dimensions/minecraft/overworld/data/minecraft/chunk_tickets.dat
+run/saves/New World/dimensions/minecraft/overworld/data/minecraft/raids.dat
+run/saves/New World/dimensions/minecraft/overworld/data/minecraft/world_border.dat
+run/saves/New World/dimensions/minecraft/overworld/entities/r.-1.-1.mca
+run/saves/New World/dimensions/minecraft/overworld/entities/r.-1.0.mca
+run/saves/New World/dimensions/minecraft/overworld/entities/r.0.-1.mca
+run/saves/New World/dimensions/minecraft/overworld/entities/r.0.0.mca
+run/saves/New World/dimensions/minecraft/overworld/poi/r.-1.-1.mca
+run/saves/New World/dimensions/minecraft/overworld/poi/r.-1.0.mca
+run/saves/New World/dimensions/minecraft/overworld/poi/r.0.-1.mca
+run/saves/New World/dimensions/minecraft/overworld/poi/r.0.0.mca
+run/saves/New World/dimensions/minecraft/overworld/region/r.-1.-1.mca
+run/saves/New World/dimensions/minecraft/overworld/region/r.-1.0.mca
+run/saves/New World/dimensions/minecraft/overworld/region/r.0.-1.mca
+run/saves/New World/dimensions/minecraft/overworld/region/r.0.0.mca
+run/saves/New World/dimensions/minecraft/the_end/data/minecraft/chunk_tickets.dat
+run/saves/New World/dimensions/minecraft/the_end/data/minecraft/ender_dragon_fight.dat
+run/saves/New World/dimensions/minecraft/the_end/data/minecraft/raids.dat
+run/saves/New World/dimensions/minecraft/the_end/data/minecraft/world_border.dat
+run/saves/New World/dimensions/minecraft/the_nether/data/minecraft/chunk_tickets.dat
+run/saves/New World/dimensions/minecraft/the_nether/data/minecraft/raids.dat
+run/saves/New World/dimensions/minecraft/the_nether/data/minecraft/world_border.dat
+run/saves/New World/players/advancements/8fffffe9-1697-3450-bdc4-1834288fdb99.json
+run/saves/New World/players/advancements/9f83efe4-f945-3a62-8c8a-b62cdf1ee258.json
+run/saves/New World/players/advancements/76a85934-d1dc-3e22-b48f-18504df540b9.json
+run/saves/New World/players/advancements/078f5e46-1768-3b85-8c83-1cee0b3b10ab.json
+run/saves/New World/players/advancements/01986ee6-ca3c-3b64-bdcd-02039da5963f.json
+run/saves/New World/players/advancements/10093cea-54e5-30aa-8af3-58e53a90cf15.json
+run/saves/New World/players/advancements/a4081500-9e8c-36ae-a97c-f165f9882cba.json
+run/saves/New World/players/advancements/aeca01bf-232e-37a2-985b-599827b3226a.json
+run/saves/New World/players/advancements/ca94d3c2-08bb-3cb6-9c61-61015e7666c6.json
+run/saves/New World/players/advancements/dbef6173-b792-3041-821b-b11445f44ee8.json
+run/saves/New World/players/advancements/ee37bc44-eeb3-3a18-8bd0-93b5769d5697.json
+run/saves/New World/players/data/8fffffe9-1697-3450-bdc4-1834288fdb99.dat
+run/saves/New World/players/data/8fffffe9-1697-3450-bdc4-1834288fdb99.dat_old
+run/saves/New World/players/data/9f83efe4-f945-3a62-8c8a-b62cdf1ee258.dat
+run/saves/New World/players/data/76a85934-d1dc-3e22-b48f-18504df540b9.dat
+run/saves/New World/players/data/76a85934-d1dc-3e22-b48f-18504df540b9.dat_old
+run/saves/New World/players/data/078f5e46-1768-3b85-8c83-1cee0b3b10ab.dat
+run/saves/New World/players/data/078f5e46-1768-3b85-8c83-1cee0b3b10ab.dat_old
+run/saves/New World/players/data/01986ee6-ca3c-3b64-bdcd-02039da5963f.dat
+run/saves/New World/players/data/01986ee6-ca3c-3b64-bdcd-02039da5963f.dat_old
+run/saves/New World/players/data/10093cea-54e5-30aa-8af3-58e53a90cf15.dat
+run/saves/New World/players/data/a4081500-9e8c-36ae-a97c-f165f9882cba.dat
+run/saves/New World/players/data/aeca01bf-232e-37a2-985b-599827b3226a.dat
+run/saves/New World/players/data/aeca01bf-232e-37a2-985b-599827b3226a.dat_old
+run/saves/New World/players/data/ca94d3c2-08bb-3cb6-9c61-61015e7666c6.dat
+run/saves/New World/players/data/dbef6173-b792-3041-821b-b11445f44ee8.dat
+run/saves/New World/players/data/dbef6173-b792-3041-821b-b11445f44ee8.dat_old
+run/saves/New World/players/data/ee37bc44-eeb3-3a18-8bd0-93b5769d5697.dat
+run/saves/New World/players/data/ee37bc44-eeb3-3a18-8bd0-93b5769d5697.dat_old
+run/saves/New World/players/stats/8fffffe9-1697-3450-bdc4-1834288fdb99.json
+run/saves/New World/players/stats/9f83efe4-f945-3a62-8c8a-b62cdf1ee258.json
+run/saves/New World/players/stats/76a85934-d1dc-3e22-b48f-18504df540b9.json
+run/saves/New World/players/stats/078f5e46-1768-3b85-8c83-1cee0b3b10ab.json
+run/saves/New World/players/stats/01986ee6-ca3c-3b64-bdcd-02039da5963f.json
+run/saves/New World/players/stats/10093cea-54e5-30aa-8af3-58e53a90cf15.json
+run/saves/New World/players/stats/a4081500-9e8c-36ae-a97c-f165f9882cba.json
+run/saves/New World/players/stats/aeca01bf-232e-37a2-985b-599827b3226a.json
+run/saves/New World/players/stats/ca94d3c2-08bb-3cb6-9c61-61015e7666c6.json
+run/saves/New World/players/stats/dbef6173-b792-3041-821b-b11445f44ee8.json
+run/saves/New World/players/stats/ee37bc44-eeb3-3a18-8bd0-93b5769d5697.json
+.gradle/9.5.1/gc.properties
+.gradle/9.5.1/checksums/checksums.lock
+.gradle/9.5.1/checksums/md5-checksums.bin
+.gradle/9.5.1/checksums/sha1-checksums.bin
+.gradle/9.5.1/executionHistory/executionHistory.bin
+.gradle/9.5.1/executionHistory/executionHistory.lock
+.gradle/9.5.1/fileChanges/last-build.bin
+.gradle/9.5.1/fileHashes/fileHashes.bin
+.gradle/9.5.1/fileHashes/fileHashes.lock
+.gradle/9.5.1/fileHashes/resourceHashesCache.bin
+.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-043a8b3edf/26.2/minecraft-merged-043a8b3edf-26.2.jar
+.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-043a8b3edf/26.2/minecraft-merged-043a8b3edf-26.2.jar.backup
+.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-043a8b3edf/26.2/minecraft-merged-043a8b3edf-26.2.pom
+.gradle/loom-cache/source_mappings/043a8b3edfaac5069f9c7e966e5106ff5e079982.tiny
+.gradle/loom-cache/source_mappings/empty.tiny
+bin/main/org/dexflex/basicallycommandutils/commands/StringCommand.class
+bin/main/org/dexflex/basicallycommandutils/commands/StringCommand$ValueExec.class
+build/tmp/compileJava/compileTransaction/stash-dir/PlayerNbtMixin.class.uniqueId0

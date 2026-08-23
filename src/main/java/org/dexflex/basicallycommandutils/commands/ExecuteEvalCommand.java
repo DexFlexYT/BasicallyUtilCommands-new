@@ -6,14 +6,14 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.CommandNode;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 /**
  * Extends /execute if and /execute unless with eval subcommand:
@@ -27,13 +27,15 @@ import static net.minecraft.server.command.CommandManager.literal;
  *   /execute if eval "round(@s?cooldown/10)=0" run say "recharged!"
  *   /execute if eval "@s?score>5 && @a[distance=..10]?score<10" run say "in range!"
  */
+
+@SuppressWarnings("null")
 public class ExecuteEvalCommand {
 
     // Reuse vanilla's exception so the failure message is consistent
     private static final SimpleCommandExceptionType CONDITIONAL_FAIL_EXCEPTION =
-            new SimpleCommandExceptionType(Text.translatable("commands.execute.conditional.fail"));
+            new SimpleCommandExceptionType(Component.translatable("commands.execute.conditional.fail"));
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         var executeNode = dispatcher.getRoot().getChild("execute");
         if (executeNode == null) return;
 
@@ -45,8 +47,8 @@ public class ExecuteEvalCommand {
     }
 
     private static void addEvalSubtree(
-            CommandNode<ServerCommandSource> parent,
-            CommandNode<ServerCommandSource> executeNode,
+            CommandNode<CommandSourceStack> parent,
+            CommandNode<CommandSourceStack> executeNode,
             boolean positive) {
 
         var evalNode = literal("eval")
@@ -54,7 +56,7 @@ public class ExecuteEvalCommand {
                         .fork(executeNode, ctx -> {
                             double result = evaluateExpression(ctx);
                             boolean passes = (result >= 1.0);
-                            Collection<ServerCommandSource> sources = (passes == positive)
+                            Collection<CommandSourceStack> sources = (passes == positive)
                                     ? Collections.singleton(ctx.getSource())
                                     : Collections.emptyList();
                             return sources;
@@ -63,8 +65,8 @@ public class ExecuteEvalCommand {
                             double result = evaluateExpression(ctx);
                             boolean passes = (result >= 1.0);
                             if (passes == positive) {
-                                ctx.getSource().sendFeedback(
-                                        () -> Text.translatable("commands.execute.conditional.pass"),
+                                ctx.getSource().sendSuccess(
+                                        () -> Component.translatable("commands.execute.conditional.pass"),
                                         false);
                                 return 1;
                             } else {
@@ -77,7 +79,7 @@ public class ExecuteEvalCommand {
         parent.addChild(evalNode);
     }
 
-    private static double evaluateExpression(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static double evaluateExpression(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         String expression = StringArgumentType.getString(ctx, "expression");
         try {
             return EvalCommand.evaluateExpression(expression, ctx.getSource());

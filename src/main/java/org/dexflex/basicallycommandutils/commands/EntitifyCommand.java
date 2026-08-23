@@ -4,57 +4,60 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.block.BlockState;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
 
+
+@SuppressWarnings("null")
 public class EntitifyCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("entitify")
-                .requires(src -> src.hasPermissionLevel(2))
-                .then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
-                        .then(CommandManager.argument("entity_type", StringArgumentType.word())
-                                .suggests((ctx, builder) -> CommandSource.suggestMatching(
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("entitify")
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                .then(Commands.argument("pos", BlockPosArgument.blockPos())
+                        .then(Commands.argument("entity_type", StringArgumentType.word())
+                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                         Arrays.asList("falling_block", "block_display"/*, "item_display"*/), builder))
                                 .executes(ctx -> execute(ctx, "keep", null))
-                                .then(CommandManager.argument("keep_remove", StringArgumentType.word())
-                                        .suggests((ctx, builder) -> CommandSource.suggestMatching(
+                                .then(Commands.argument("keep_remove", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 Arrays.asList("keep", "remove"), builder))
                                         .executes(ctx -> execute(ctx,
                                                 StringArgumentType.getString(ctx, "keep_remove"), null))
-                                        .then(CommandManager.argument("tag", StringArgumentType.greedyString())
+                                        .then(Commands.argument("tag", StringArgumentType.greedyString())
                                                 .executes(ctx -> execute(ctx,
                                                         StringArgumentType.getString(ctx, "keep_remove"),
                                                         StringArgumentType.getString(ctx, "tag"))))))));
     }
 
-    private static int execute(CommandContext<ServerCommandSource> context, String keepRemove, String tag)
+    private static int execute(CommandContext<CommandSourceStack> context, String keepRemove, String tag)
             throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
-        World world = source.getWorld();
-        BlockPos pos = BlockPosArgumentType.getBlockPos(context, "pos");
+        CommandSourceStack source = context.getSource();
+        Level world = source.getLevel();
+        BlockPos pos = BlockPosArgument.getBlockPos(context, "pos");
         BlockState blockState = world.getBlockState(pos);
         if (blockState.isAir()) {
-            source.sendError(Text.literal("No block found."));
+            source.sendFailure(Component.literal("No block found."));
             return 0;
         }
 
-        Vec3d spawnPos = Vec3d.ofCenter(pos);
+        Vec3 spawnPos = Vec3.atCenterOf(pos);
         String entityType = StringArgumentType.getString(context, "entity_type");
         String tagToUse = (tag == null || tag.isEmpty()) ? "BUC.entitified." + entityType : tag;
         //String blockId = Registries.BLOCK.getId(blockState.getBlock()).toString();
-        NbtCompound stateTag = NbtHelper.fromBlockState(blockState);
+        CompoundTag stateTag = NbtUtils.writeBlockState(blockState);
         double x = spawnPos.x, y = spawnPos.y, z = spawnPos.z;
 
         if (entityType.equals("falling_block")) {
@@ -63,18 +66,18 @@ public class EntitifyCommand {
                     stateTag, tagToUse
             );
             source.getServer()
-                    .getCommandManager()
+                    .getCommands()
                     .getDispatcher()
-                    .execute(String.format("summon falling_block %f %f %f %s", x, y, z, nbt), source.withSilent());
+                    .execute(String.format("summon falling_block %f %f %f %s", x, y, z, nbt), source.withSuppressedOutput());
         } else if (entityType.equals("block_display")) {
             String nbt = String.format(
                     "{block_state:%s,Tags:[\"%s\"]}",
                     stateTag, tagToUse
             );
             source.getServer()
-                    .getCommandManager()
+                    .getCommands()
                     .getDispatcher()
-                    .execute(String.format("summon block_display %f %f %f %s", x, y, z, nbt), source.withSilent());
+                    .execute(String.format("summon block_display %f %f %f %s", x, y, z, nbt), source.withSuppressedOutput());
         }
         /*
         // Commented out item_display for now. Re-enable if needed later:
@@ -85,13 +88,13 @@ public class EntitifyCommand {
                 itemId, tagToUse
             );
             source.getServer()
-                  .getCommandManager()
+                  .getCommands()
                   .getDispatcher()
-                  .execute(String.format("summon item_display %f %f %f %s", x, y, z, nbt), source.withSilent());
+                  .execute(String.format("summon item_display %f %f %f %s", x, y, z, nbt), source.withSuppressedOutput());
         }
         */
         else {
-            source.sendError(Text.literal("Invalid type. Use falling_block or block_display."));
+            source.sendFailure(Component.literal("Invalid type. Use falling_block or block_display."));
             return 0;
         }
 
@@ -99,7 +102,7 @@ public class EntitifyCommand {
             world.removeBlock(pos, false);
         }
 
-        source.sendFeedback(() -> Text.literal("Entitified as " + entityType + " with tag '" + tagToUse + "'."), true);
+        source.sendSuccess(() -> Component.literal("Entitified as " + entityType + " with tag '" + tagToUse + "'."), true);
         return 1;
     }
 }

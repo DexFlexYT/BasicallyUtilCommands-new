@@ -18,20 +18,16 @@ public class BasicallyUtilCommands implements ModInitializer {
 			DistanceCommand.register(dispatcher);
 			HealCommand.register(dispatcher);
 			MotionCommand.register(dispatcher);
-			IgniteCommand.register(dispatcher);
 			EntitifyCommand.register(dispatcher);
 			RandCommand.register(dispatcher);
-			ForceGlideCommand.register(dispatcher);
-			ForceCrawlCommand.register(dispatcher);
             RepeatCommand.register(dispatcher);
             EvalCommand.register(dispatcher);
-			SetGametimeCommand.register(dispatcher);
+			StringCommand.register(dispatcher);
 			ExecuteTextCommand.register(dispatcher);
 			ExecuteEvalCommand.register(dispatcher);
 			ExecutePositionedGroundCommand.register(dispatcher, registryAccess);
 			GetNormalCommand.register(dispatcher);
 			MulticommandCommand.register(dispatcher);
-			StringCommand.register(dispatcher);
 		});
 		LOGGER.info("BasicallyUtilCommands initialized");
 	}

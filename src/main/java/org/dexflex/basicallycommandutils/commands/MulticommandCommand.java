@@ -4,36 +4,40 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permissions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+
+@SuppressWarnings("null")
 public class MulticommandCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("multicommand")
-                .requires(source -> source.hasPermissionLevel(2))
-                .then(CommandManager.argument("commands", StringArgumentType.greedyString())
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("multicommand")
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                .then(Commands.argument("commands", StringArgumentType.greedyString())
                         .executes(MulticommandCommand::executeMulticommand)
                 )
         );
     }
 
-    private static int executeMulticommand(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private static int executeMulticommand(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String input = StringArgumentType.getString(context, "commands");
         List<String> commands = parseCommands(input);
         
         if (commands.isEmpty()) {
-            context.getSource().sendError(Text.literal("No commands found. Use format: <c>command1</c><c>command2</c><c>etc...</c>"));
+            context.getSource().sendFailure(Component.literal("No commands found. Use format: <c>command1</c><c>command2</c><c>etc...</c>"));
             return 0;
         }
         
-        ServerCommandSource source = context.getSource();
-        CommandDispatcher<ServerCommandSource> dispatcher = source.getServer().getCommandManager().getDispatcher();
+        CommandSourceStack source = context.getSource();
+        CommandDispatcher<CommandSourceStack> dispatcher = source.getServer().getCommands().getDispatcher();
         
         int successCount = 0;
         for (String command : commands) {
@@ -43,9 +47,9 @@ public class MulticommandCommand {
                     successCount++;
                 }
             } catch (CommandSyntaxException e) {
-                source.sendError(Text.literal("Error in command: " + command + " - " + e.getMessage()));
+                source.sendFailure(Component.literal("Error in command: " + command + " - " + e.getMessage()));
             } catch (Exception e) {
-                source.sendError(Text.literal("Error in command: " + command + " - " + e.getClass().getSimpleName() + ": " + e.getMessage()));
+                source.sendFailure(Component.literal("Error in command: " + command + " - " + e.getClass().getSimpleName() + ": " + e.getMessage()));
             }
         }
         

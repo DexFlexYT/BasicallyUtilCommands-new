@@ -5,18 +5,19 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.EntitySelectorReader;
-import net.minecraft.command.argument.NbtPathArgumentType;
-import net.minecraft.command.argument.NbtPathArgumentType.NbtPath;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import net.minecraft.commands.arguments.NbtPathArgument;
+import net.minecraft.commands.arguments.NbtPathArgument.NbtPath;
 import net.minecraft.nbt.*;
-import net.minecraft.scoreboard.ScoreAccess;
-import net.minecraft.scoreboard.ScoreHolder;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.scores.ScoreAccess;
+import net.minecraft.world.scores.ScoreHolder;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.Permissions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,32 +26,33 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("null")
 public class EvalCommand {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("basicallyutilcommands/eval");
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("eval")
-                .requires(source -> source.hasPermissionLevel(2))
-                .then(CommandManager.argument("expression", StringArgumentType.greedyString())
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("eval")
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                .then(Commands.argument("expression", StringArgumentType.greedyString())
                         .executes(EvalCommand::execute)
                 )
         );
     }
 
-    private static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String expression = StringArgumentType.getString(context, "expression");
         
         try {
             double result = evaluateExpression(expression, context.getSource());
-            context.getSource().sendFeedback(
-                    () -> Text.literal("Result: " + result),
+            context.getSource().sendSuccess(
+                    () -> Component.literal("Result: " + result),
                     false
             );
             return (int) result;
         } catch (EvalException e) {
             LOGGER.error("Eval expression failed: {}", e.getDetailedMessage());
-            context.getSource().sendError(Text.literal("Eval error: " + e.getMessage()));
+            context.getSource().sendFailure(Component.literal("Eval error: " + e.getMessage()));
             throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().create();
         }
     }
@@ -59,7 +61,7 @@ public class EvalCommand {
      * Public API for evaluating expressions. Reused by ExecuteEvalCommand.
      * Source can be null for basic expressions (numbers, operators, functions)
      */
-    public static double evaluateExpression(String expression, ServerCommandSource source) throws EvalException {
+    public static double evaluateExpression(String expression, CommandSourceStack source) throws EvalException {
         try {
             ExpressionEvaluator evaluator = new ExpressionEvaluator(source, expression);
             return evaluator.evaluate(expression);
@@ -94,11 +96,12 @@ public class EvalCommand {
     /* ======================= EVALUATOR ======================= */
 
     private static class ExpressionEvaluator {
-        private final ServerCommandSource source;
+        private final CommandSourceStack source;
+        @SuppressWarnings("unused")
         private final String expression;
         private final Tokenizer tokenizer = new Tokenizer();
 
-        ExpressionEvaluator(ServerCommandSource source, String expression) {
+        ExpressionEvaluator(CommandSourceStack source, String expression) {
             this.source = source;
             this.expression = expression;
         }
@@ -169,11 +172,11 @@ public class EvalCommand {
 
     private static class Parser {
         private final List<Token> tokens;
-        private final ServerCommandSource source;
+        private final CommandSourceStack source;
         private final String expression;
         private int pos = 0;
 
-        Parser(List<Token> tokens, ServerCommandSource source, String expression) {
+        Parser(List<Token> tokens, CommandSourceStack source, String expression) {
             this.tokens = tokens;
             this.source = source;
             this.expression = expression;
@@ -453,7 +456,7 @@ public class EvalCommand {
             if (source == null) throw new EvalException("Scoreboard access requires command source", expression, expression.indexOf(objective));
             
             Scoreboard board = source.getServer().getScoreboard();
-            ScoreboardObjective obj = board.getNullableObjective(objective);
+            Objective obj = board.getObjective(objective);
             if (obj == null)
                 throw new EvalException(
                     "Scoreboard objective does not exist: '" + objective + "'",
@@ -464,9 +467,9 @@ public class EvalCommand {
             List<Double> out = new ArrayList<>();
 
             for (String h : holders) {
-                ScoreHolder holder = ScoreHolder.fromName(h);
-                ScoreAccess s = board.getOrCreateScore(holder, obj);
-                out.add((double) s.getScore());
+                ScoreHolder holder = ScoreHolder.forNameOnly(h);
+                ScoreAccess s = board.getOrCreatePlayerScore(holder, obj);
+                out.add((double) s.get());
             }
             return out;
         }
@@ -477,13 +480,13 @@ public class EvalCommand {
             if (source == null) throw new EvalException("Entity selectors require command source", expression, expression.indexOf(target));
 
             try {
-                Collection<? extends net.minecraft.entity.Entity> entities =
-                        new EntitySelectorReader(new StringReader(target), true)
-                                .read()
-                                .getEntities(source);
+                Collection<? extends net.minecraft.world.entity.Entity> entities =
+                        new EntitySelectorParser(new StringReader(target), true)
+                                .parse()
+                                .findEntities(source);
 
                 List<String> out = new ArrayList<>();
-                for (var e : entities) out.add(e.getNameForScoreboard());
+                for (var e : entities) out.add(e.getScoreboardName());
                 return out;
             } catch (Exception e) {
                 throw new EvalException(
@@ -507,22 +510,22 @@ public class EvalCommand {
             String path = parts[2];
             Identifier identifier;
             try {
-                identifier = Identifier.of(storageId);
+                identifier = Identifier.parse(storageId);
             } catch (Exception e) {
                 throw new EvalException("Invalid storage identifier: " + storageId, expression, findTokenPosition(tokens.get(pos - 1)));
             }
 
-            NbtCompound storage = source.getServer().getDataCommandStorage().get(identifier);
-            if (storage == null) return 0.0;
+            CompoundTag storage = source.getServer().getCommandStorage().get(identifier);
+            // if (storage == null) return 0.0;
 
             NbtPath nbtPath;
             try {
-                nbtPath = NbtPathArgumentType.nbtPath().parse(new StringReader(path));
+                nbtPath = NbtPathArgument.nbtPath().parse(new StringReader(path));
             } catch (CommandSyntaxException e) {
                 throw new EvalException("Invalid NBT path: " + e.getMessage(), expression, findTokenPosition(tokens.get(pos - 1)));
             }
 
-            List<? extends NbtElement> values;
+            List<? extends Tag> values;
                 try {
                     values = nbtPath.get(storage);
                 } catch (CommandSyntaxException e) {
@@ -536,12 +539,12 @@ public class EvalCommand {
                     .orElse(0.0);
         }
 
-        private double nbtValue(NbtElement element) {
-        if (element instanceof AbstractNbtNumber number) {
+        private double nbtValue(Tag element) {
+        if (element instanceof NumericTag number) {
             return number.doubleValue();
         }
-        if (element instanceof NbtString string) {
-            String text = string.asString();
+        if (element instanceof StringTag string) {
+            String text = string.value();
             if (text.equalsIgnoreCase("true")) return 1.0;
             if (text.equalsIgnoreCase("false")) return 0.0;
             try {
@@ -550,20 +553,20 @@ public class EvalCommand {
                 return text.length();
             }
         }
-        if (element instanceof NbtList list) {
+        if (element instanceof ListTag list) {
             return list.size();
         }
-        if (element instanceof NbtCompound compound) {
-            return compound.getKeys().size();
+        if (element instanceof CompoundTag compound) {
+            return compound.keySet().size();
         }
-        if (element instanceof NbtByteArray byteArray) {
-            return byteArray.getByteArray().length;
+        if (element instanceof ByteArrayTag byteArray) {
+            return byteArray.getAsByteArray().length;
         }
-        if (element instanceof NbtIntArray intArray) {
-            return intArray.getIntArray().length;
+        if (element instanceof IntArrayTag intArray) {
+            return intArray.getAsIntArray().length;
         }
-        if (element instanceof NbtLongArray longArray) {
-            return longArray.getLongArray().length;
+        if (element instanceof LongArrayTag longArray) {
+            return longArray.getAsLongArray().length;
         }
         return 0.0;
     }
