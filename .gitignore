@@ -17,7 +17,7 @@
 .gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-c2b31d572c/1.21-net.fabricmc.yarn.1_21.1.21+build.9-v2/minecraft-merged-c2b31d572c-1.21-net.fabricmc.yarn.1_21.1.21+build.9-v2.jar
 .gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-c2b31d572c/1.21-net.fabricmc.yarn.1_21.1.21+build.9-v2/minecraft-merged-c2b31d572c-1.21-net.fabricmc.yarn.1_21.1.21+build.9-v2.jar.backup
 .gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-c2b31d572c/1.21-net.fabricmc.yarn.1_21.1.21+build.9-v2/minecraft-merged-c2b31d572c-1.21-net.fabricmc.yarn.1_21.1.21+build.9-v2.pom
-.gradle/loom-cache/remapped_mods/net_fabricmc_yarn_1_21_1_21_build_9_v2/net/fabricmc/fabric-api/fabric-api/0.102.0+1.21/fabric-api-0.102.0+1.21-sources.jar
+.gradle
 .gradle/loom-cache/remapped_mods/net_fabricmc_yarn_1_21_1_21_build_9_v2/net/fabricmc/fabric-api/fabric-api/0.102.0+1.21/fabric-api-0.102.0+1.21.jar
 .gradle/loom-cache/remapped_mods/net_fabricmc_yarn_1_21_1_21_build_9_v2/net/fabricmc/fabric-api/fabric-api/0.102.0+1.21/fabric-api-0.102.0+1.21.pom
 .gradle/loom-cache/remapped_mods/net_fabricmc_yarn_1_21_1_21_build_9_v2/net/fabricmc/fabric-api/fabric-api-base/0.4.42+6573ed8cd1/fabric-api-base-0.4.42+6573ed8cd1-sources.jar
@@ -179,7 +179,7 @@
 .idea/runConfigurations/Minecraft_Client.xml
 .idea/runConfigurations/Minecraft_Server.xml
 .vscode/settings.json
-build/devlibs/basicallyutilcommands-2.6-dev.jar
+build
 build/devlibs/basicallyutilcommands-2.6-sources.jar
 build/devlibs/basicallyutilcommands-2.7-dev.jar
 build/devlibs/basicallyutilcommands-2.7-sources.jar
@@ -390,7 +390,7 @@ run/logs/debug-3.log.gz
 run/logs/debug-4.log.gz
 run/logs/debug-5.log.gz
 run/logs/debug.log
-run/logs/latest.log
+run
 run/saves/New World/icon.png
 run/saves/New World/level.dat
 run/saves/New World/level.dat_old
@@ -518,7 +518,7 @@ run/screenshots/debug/minecraft_textures_atlas_signs.png_4.png
 run/screenshots/debug/minecraft_textures_atlas_signs.png.txt
 run/screenshots/debug/minecraft_uniform_0_0.png
 .idea/.gitignore
-bin/main/basicallyutilcommands.mixins.json
+bin
 bin/main/fabric.mod.json
 bin/main/assets/basicallyutilcommands/icon.png
 bin/main/org/dexflex/basicallycommandutils/BasicallyUtilCommands.class
@@ -690,3 +690,16 @@ run/saves/New World/players/stats/ee37bc44-eeb3-3a18-8bd0-93b5769d5697.json
 bin/main/org/dexflex/basicallycommandutils/commands/StringCommand.class
 bin/main/org/dexflex/basicallycommandutils/commands/StringCommand$ValueExec.class
 build/tmp/compileJava/compileTransaction/stash-dir/PlayerNbtMixin.class.uniqueId0
+build/libs/basicallyutilcommands-3.6-26.2-sources.jar
+build/libs/basicallyutilcommands-3.6-26.2.jar
+build/tmp/compileJava/compileTransaction/stash-dir/BasicallyUtilCommands.class.uniqueId4
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand.class.uniqueId0
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand$EvalException.class.uniqueId3
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand$ExpressionEvaluator.class.uniqueId9
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand$Parser.class.uniqueId7
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand$Token.class.uniqueId5
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand$Tokenizer.class.uniqueId10
+build/tmp/compileJava/compileTransaction/stash-dir/EvalCommand$TokenType.class.uniqueId8
+build/tmp/compileJava/compileTransaction/stash-dir/ExecuteEvalCommand.class.uniqueId2
+build/tmp/compileJava/compileTransaction/stash-dir/ExecutePositionedGroundCommand.class.uniqueId6
+build/tmp/compileJava/compileTransaction/stash-dir/PlayerNbtMixin.class.uniqueId1
