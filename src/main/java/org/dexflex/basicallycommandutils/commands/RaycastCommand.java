@@ -11,11 +11,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import java.util.Locale;
 import net.minecraft.world.entity.Marker;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
+
+import org.dexflex.basicallycommandutils.util.MarkerSpawner;
 
 
 @SuppressWarnings("null")
@@ -45,13 +47,9 @@ public class RaycastCommand {
                                             Vec2 rot = source.getRotation();
                                             Vec3 dir = Vec3.directionFromRotation(rot);
 
-                                            Marker marker = new Marker(EntityTypes.MARKER, world);
-                                            marker.setPos(startPos);
-                                            marker.addTag("BUC.raycast");
-                                            world.addFreshEntity(marker);
-
+                                            Entity marker = MarkerSpawner.spawn(world, startPos.x, startPos.y, startPos.z, "BUC.raycast");
                                             runRaycastStep(world, source, command, startPos, dir, stepLength, steps, 0, marker.getUUID());
-
+                                            
                                             source.sendSuccess(() ->
                                                             Component.literal("Raycasting " + steps + " steps with length " + stepLength),
                                                     false

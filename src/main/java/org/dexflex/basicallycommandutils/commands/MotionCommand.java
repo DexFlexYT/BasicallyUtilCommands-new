@@ -18,6 +18,8 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import java.util.Collection;
 
+import org.dexflex.basicallycommandutils.util.VelocitySync;
+
 
 
 @SuppressWarnings("null")
@@ -142,7 +144,7 @@ public class MotionCommand {
             double ny = ay ? vel.y * factor : vel.y;
             double nz = az ? vel.z * factor : vel.z;
             e.setDeltaMovement(nx, ny, nz);
-            e.hurtMarked = true;
+            VelocitySync.markDirty(e);
             applied++;
         }
         final int resultCount = applied;
@@ -197,7 +199,7 @@ public class MotionCommand {
                 // SET: replace velocity entirely
                 e.setDeltaMovement(dir.x, dir.y, dir.z);
             }
-            e.hurtMarked = true;
+            VelocitySync.markDirty(e);
             applied++;
         }
 
